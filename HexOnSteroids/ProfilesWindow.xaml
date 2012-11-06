@@ -1,0 +1,79 @@
+﻿<Window x:Class="HexOnSteroids.ProfilesWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:HexOnSteroids="clr-namespace:HexOnSteroids"
+        Title="Hex on Steroids - Edit Profile" Height="598" Width="521" Closing="Window_Closing_1"
+        Icon="pack://siteoforigin:,,,/NBA 2K12.ico">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="TypeList" MethodName="GetValues" ObjectType="{x:Type HexOnSteroids:TypeOfValues}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="HexOnSteroids:TypeOfValues" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="EndianList" MethodName="GetValues" ObjectType="{x:Type HexOnSteroids:Endianness}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="HexOnSteroids:Endianness" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <Grid Name="grdProfile">
+        <Label Content="Category" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+        <ComboBox x:Name="cmbCategories" Margin="94,14,90,0" VerticalAlignment="Top"
+                  SelectionChanged="cmbCategories_SelectionChanged" />
+        <Button x:Name="btnEditCategories" Content="Edit..." Margin="0,14,10,0" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Width="75" Click="btnEditCategories_Click" />
+        <Label Content="Profile" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" />
+        <ComboBox x:Name="cmbProfiles" Margin="94,41,90,0" VerticalAlignment="Top"
+                  SelectionChanged="cmbProfiles_SelectionChanged" />
+        <Label Content="Files" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top" />
+        <ListBox x:Name="lstFiles" Margin="94,78,90,0" ItemsSource="{Binding Files}" Height="71" VerticalAlignment="Top" />
+        <Button x:Name="btnFilesAdd" Content="Add" Margin="0,78,10,0" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Width="75" Click="btnFilesAdd_Click" />
+        <Button x:Name="btnFilesRemove" Content="Remove" Margin="0,105,10,0" VerticalAlignment="Top"
+                HorizontalAlignment="Right" Width="75" Click="btnFilesRemove_Click" />
+        <GroupBox Header="Options" Margin="10,166,10,45">
+            <Grid Name="grdOptions">
+                <RadioButton x:Name="rbAutoDetect" Content="Auto-detect shaders" HorizontalAlignment="Left"
+                             VerticalAlignment="Top" Margin="10,42,0,0" IsChecked="True" Checked="rbAutoDetect_Checked" />
+                <TextBox x:Name="txtAutoDetectValueCount" HorizontalAlignment="Left" Height="23" Margin="160,39,0,0"
+                         TextWrapping="Wrap" VerticalAlignment="Top" Width="41" Text="{Binding AutoDetectValueCount}" />
+                <Label Content="values" HorizontalAlignment="Left" Margin="201,37,0,0" VerticalAlignment="Top" />
+                <RadioButton x:Name="rbWholeFile" Content="Whole file" HorizontalAlignment="Left"
+                             VerticalAlignment="Top" Margin="10,67,0,0" Checked="rbWholeFile_Checked" />
+                <ComboBox x:Name="cmbDatatype" Margin="0,42,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                          Width="120" SelectedItem="{Binding AutoDetectValueType}" ItemsSource="{Binding Source={StaticResource TypeList}}"
+                          SelectionChanged="cmbDatatype_SelectionChanged" />
+                <RadioButton x:Name="rbCustom" Content="Custom" HorizontalAlignment="Left" Margin="10,92,0,0"
+                             VerticalAlignment="Top" Checked="rbCustom_Checked" />
+                <ComboBox x:Name="cmbEndianness" Margin="0,69,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                          Width="120" SelectedItem="{Binding Endianness}" ItemsSource="{Binding Source={StaticResource EndianList}}" />
+                <Label Content="Data Type" Margin="0,39,135,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                       Width="63" />
+                <Label Content="Endianness" Margin="0,65,135,0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                       Width="73" />
+                <DataGrid Name="dgRanges" Margin="10,173,10,10" AutoGenerateColumns="False" SelectionUnit="Cell">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" ClipboardContentBinding="{x:Null}" />
+                        <DataGridTextColumn Header="Start" Binding="{Binding Start}" ClipboardContentBinding="{x:Null}" />
+                        <DataGridTextColumn Header="End" Binding="{Binding End}" ClipboardContentBinding="{x:Null}" />
+                        <DataGridComboBoxColumn Header="Type" ClipboardContentBinding="{x:Null}"
+                                                SelectedValueBinding="{Binding Type}" ItemsSource="{Binding Source={StaticResource TypeList}}"
+                                                SelectedItemBinding="{x:Null}" TextBinding="{x:Null}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <CheckBox Name="chkBounds" Content="Only values between" HorizontalAlignment="Right" Margin="0,99,191,0" VerticalAlignment="Top" IsChecked="{Binding UseBounds}"/>
+                <TextBox Name="txtLowerBound" HorizontalAlignment="Right" Height="23" Margin="0,96,114,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="72" Text="{Binding LowerBound}"/>
+                <TextBox Name="txtUpperBound" HorizontalAlignment="Right" Height="23" Margin="0,96,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="72" Text="{Binding UpperBound}"/>
+                <Label Content="and" HorizontalAlignment="Right" Margin="0,94,82,0" VerticalAlignment="Top"/>
+                <CheckBox x:Name="chkUseAbsolute" Content="Only values of absolute value higher or equal to" HorizontalAlignment="Right" Margin="0,127,87,0" VerticalAlignment="Top" IsChecked="{Binding UseAbsolute}"/>
+                <TextBox x:Name="txtAbsoluteValue" HorizontalAlignment="Right" Height="23" Margin="0,124,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="72" Text="{Binding AbsoluteValue}"/>
+                <CheckBox x:Name="chkIgnoreFirst4Bytes" Content="Ignore first 4 bytes" HorizontalAlignment="Right" Margin="0,152,10,0" VerticalAlignment="Top" IsChecked="{Binding IgnoreCRC}"/>
+                <RadioButton x:Name="rbAutoDetectCustom" Content="Auto-detect with custom header" HorizontalAlignment="Left"
+                	VerticalAlignment="Top" Margin="10,14,0,0" IsChecked="True" Checked="rbAutoDetectCustom_Checked" />
+                <TextBox x:Name="txtCustomHeader" Height="23" Margin="213,10,10,0" VerticalAlignment="Top" Text="{Binding AutoDetectCustomHeader}" MaxLines="1"/>
+
+            </Grid>
+        </GroupBox>
+        <Button x:Name="btnOK" Content="OK" Margin="0,0,10,10" Height="22" VerticalAlignment="Bottom"
+                HorizontalAlignment="Right" Width="75" Click="btnOK_Click" />
+
+    </Grid>
+</Window>

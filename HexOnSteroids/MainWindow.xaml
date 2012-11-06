@@ -1,0 +1,28 @@
+﻿<Window x:Class="HexOnSteroids.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Hex on Steroids" Height="404" Width="633"
+        Icon="pack://siteoforigin:,,,/NBA 2K12.ico" Closing="Window_Closing_1">
+    <Grid Name="mainGrid">
+        <Menu HorizontalAlignment="Stretch" Height="25" Margin="0,0,0,0" VerticalAlignment="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open..." Name="mnuFileOpen" Click="mnuFileOpen_Click" />
+                <MenuItem Header="_Save..." Name="mnuFileSave" Click="mnuFileSave_Click" />
+                <Separator/>
+                <MenuItem Header="Exit" Name="mnuFileExit" Click="mnuFileExit_Click" />
+            </MenuItem>
+            <MenuItem Header="_Find">
+                <MenuItem Header="_Go to Offset..." Name="mnuFindGoTo" Click="mnuFindGoTo_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Profiles" Name="mnuProfiles">
+                <MenuItem Header="_Profile List" Name="mnuProfilesList" />
+                <Separator />
+                <MenuItem Header="_Edit..." Name="mnuProfilesEdit" Click="mnuProfilesEdit_Click" />
+            </MenuItem>
+        </Menu>
+        <DataGrid Name="dataGrid" HorizontalAlignment="Stretch" Margin="6,30,6,25" VerticalAlignment="Stretch" EnableColumnVirtualization="True" EnableRowVirtualization="True"
+                  ItemsSource="{Binding Path=.}" LoadingRow="dataGrid_LoadingRow" SelectionUnit="Cell" SelectedCellsChanged="dataGrid_SelectedCellsChanged" CanUserReorderColumns="False" CanUserSortColumns="False" ClipboardCopyMode="IncludeHeader" IsSynchronizedWithCurrentItem="True" PreviewKeyDown="dataGrid_PreviewKeyDown" />
+        <StatusBar HorizontalAlignment="Stretch" Height="25" Margin="0" VerticalAlignment="Bottom">
+            <TextBlock Name="txbStatus" Margin="1" />
+        </StatusBar>
+
+    </Grid>
+</Window>
