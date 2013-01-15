@@ -184,7 +184,7 @@ namespace HexOnSteroids
                                                      // "Shader Compiler"
                                                  {
                                                      if (cp.RangeType == RangeType.AutoDetectShaders) 
-                                                         br.BaseStream.Position += 17;
+                                                         br.BaseStream.Position += 19;
                                                      if (br.BaseStream.Position % 2 == 1)
                                                          br.BaseStream.Position++;
                                                      s = new Shader(cp.AutoDetectValueType, cp.Endianness,
@@ -827,7 +827,7 @@ namespace HexOnSteroids
                 int row = dataGrid.Items.IndexOf(dataGrid.CurrentCell.Item);
                 int col = dataGrid.CurrentCell.Column.DisplayIndex;
 
-                if (row + lines.Length > dataGrid.Items.Count)
+                if (row + lines.Length > dataGrid.Items.Count + 1)
                 {
                     MessageBox.Show(
                         "You're trying to paste more rows than currently available. Make sure you're not selecting the shader/range names when copying data.");

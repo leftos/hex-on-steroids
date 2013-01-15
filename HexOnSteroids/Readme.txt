@@ -13,6 +13,12 @@
 
 
 	Version History
+		v0.3.0.3
+			- Fixed pasting to the last row
+
+		v0.3.0.2
+			- Changed (fixed?) point at which Auto Detect Shaders starts reading data
+
 		v0.3.0.1
 			- Fixes in Auto Detect with Custom Header feature
 
