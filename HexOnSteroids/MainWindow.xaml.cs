@@ -1,25 +1,43 @@
-﻿using System;
+﻿#region Copyright Notice
+
+//    Copyright 2011-2013 Eleftherios Aslanoglou
+// 
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//        http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+
+#endregion
+
+#region Using Directives
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 using LeftosCommonLibrary;
 using Microsoft.Win32;
 using MiscUtil.Conversion;
 using MiscUtil.IO;
 
+#endregion
+
 namespace HexOnSteroids
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -31,7 +49,7 @@ namespace HexOnSteroids
         public static string profileToLoad = "";
         private string profileSelected;
         private string title = "Hex on Steroids";
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -55,11 +73,11 @@ namespace HexOnSteroids
         {
             int i = 0;
             mnuProfilesList.Items.Clear();
-            foreach (string dir in Directory.GetDirectories(ProfilesPath))
+            foreach (var dir in Directory.GetDirectories(ProfilesPath))
             {
                 var mi = new MenuItem();
                 mi.Header = Helper.GetFolderName(dir);
-                foreach (string f in Directory.GetFiles(dir))
+                foreach (var f in Directory.GetFiles(dir))
                 {
                     var mi2 = new MenuItem();
                     mi2.Header = Path.GetFileName(f);
@@ -102,9 +120,9 @@ namespace HexOnSteroids
             if (ofd.FileName == "")
                 return;
 
-            foreach (string dir in Directory.GetDirectories(ProfilesPath))
+            foreach (var dir in Directory.GetDirectories(ProfilesPath))
             {
-                foreach (string f in Directory.GetFiles(dir))
+                foreach (var f in Directory.GetFiles(dir))
                 {
                     CustomProfile temp = ProfilesWindow.LoadProfile(f, true);
                     if (temp.Files.Any(f1 => f1 == ofd.FileName))
@@ -160,7 +178,7 @@ namespace HexOnSteroids
 
                     worker.DoWork += delegate
                                      {
-                                         int length = cp.RangeType == RangeType.AutoDetectShaders ? 15 : cp.AutoDetectCustomHeader.Length / 2;
+                                         int length = cp.RangeType == RangeType.AutoDetectShaders ? 15 : cp.AutoDetectCustomHeader.Length/2;
                                          while (br.BaseStream.Length - br.BaseStream.Position >= length)
                                          {
                                              byte b = 0;
@@ -171,7 +189,8 @@ namespace HexOnSteroids
                                              }
                                              else
                                              {
-                                                 while (Tools.ByteArrayToString(new byte[]{b}) != cp.AutoDetectCustomHeader.Substring(0,2) && br.BaseStream.Position < br.BaseStream.Length)
+                                                 while (Tools.ByteArrayToString(new[] {b}) != cp.AutoDetectCustomHeader.Substring(0, 2) &&
+                                                        br.BaseStream.Position < br.BaseStream.Length)
                                                      b = br.ReadByte();
                                              }
                                              br.BaseStream.Position -= 1;
@@ -179,13 +198,15 @@ namespace HexOnSteroids
                                              {
                                                  //Console.WriteLine("Reading {0} bytes from {1}", length, br.BaseStream.Position);
                                                  byte[] bufArray = br.ReadBytes(length);
-                                                 if ((cp.RangeType == RangeType.AutoDetectShaders && Tools.ByteArrayToString(bufArray) == "53686164657220436F6D70696C6572")
-                                                     || (cp.RangeType == RangeType.AutoDetectCustomHeader && Tools.ByteArrayToString(bufArray) == cp.AutoDetectCustomHeader))
+                                                 if ((cp.RangeType == RangeType.AutoDetectShaders &&
+                                                      Tools.ByteArrayToString(bufArray) == "53686164657220436F6D70696C6572") ||
+                                                     (cp.RangeType == RangeType.AutoDetectCustomHeader &&
+                                                      Tools.ByteArrayToString(bufArray) == cp.AutoDetectCustomHeader))
                                                      // "Shader Compiler"
                                                  {
-                                                     if (cp.RangeType == RangeType.AutoDetectShaders) 
+                                                     if (cp.RangeType == RangeType.AutoDetectShaders)
                                                          br.BaseStream.Position += 19;
-                                                     if (br.BaseStream.Position % 2 == 1)
+                                                     if (br.BaseStream.Position%2 == 1)
                                                          br.BaseStream.Position++;
                                                      s = new Shader(cp.AutoDetectValueType, cp.Endianness,
                                                                     string.Format("S{0} @ {1}", i++, br.BaseStream.Position));
@@ -197,7 +218,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 8)
                                                              {
-                                                                 var buf = br.ReadDouble();
+                                                                 double buf = br.ReadDouble();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -206,7 +227,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 4)
                                                              {
-                                                                 var buf = br.ReadSingle();
+                                                                 float buf = br.ReadSingle();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -215,7 +236,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 1)
                                                              {
-                                                                 var buf = br.ReadByte();
+                                                                 byte buf = br.ReadByte();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -224,7 +245,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 2)
                                                              {
-                                                                 var buf = br.ReadInt16();
+                                                                 short buf = br.ReadInt16();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -233,7 +254,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 4)
                                                              {
-                                                                 var buf = br.ReadInt32();
+                                                                 int buf = br.ReadInt32();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -242,7 +263,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 8)
                                                              {
-                                                                 var buf = br.ReadInt64();
+                                                                 long buf = br.ReadInt64();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -251,7 +272,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 2)
                                                              {
-                                                                 var buf = br.ReadUInt16();
+                                                                 ushort buf = br.ReadUInt16();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -260,7 +281,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 4)
                                                              {
-                                                                 var buf = br.ReadUInt32();
+                                                                 uint buf = br.ReadUInt32();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -269,7 +290,7 @@ namespace HexOnSteroids
                                                              while (j < cp.AutoDetectValueCount &&
                                                                     br.BaseStream.Length - br.BaseStream.Position >= 8)
                                                              {
-                                                                 var buf = br.ReadUInt64();
+                                                                 ulong buf = br.ReadUInt64();
                                                                  s.AddValue(buf);
                                                                  j++;
                                                              }
@@ -289,7 +310,8 @@ namespace HexOnSteroids
                                      };
 
                     worker.ProgressChanged +=
-                        delegate(object o, ProgressChangedEventArgs args) { Title = string.Format("{0} - Auto-detecting shaders: {1}% complete", title, args.ProgressPercentage); };
+                        delegate(object o, ProgressChangedEventArgs args)
+                        { Title = string.Format("{0} - Auto-detecting shaders: {1}% complete", title, args.ProgressPercentage); };
 
                     worker.RunWorkerCompleted += delegate
                                                  {
@@ -386,7 +408,7 @@ namespace HexOnSteroids
 
                     #region Custom Profile
 
-                    foreach (CustomDataRange cdr in cp.Ranges)
+                    foreach (var cdr in cp.Ranges)
                     {
                         s = new Shader(cdr.Type, cp.Endianness, cdr.Name);
                         br.BaseStream.Position = cdr.Start;
@@ -530,15 +552,16 @@ namespace HexOnSteroids
             string oldtitle = Title;
             mainGrid.IsEnabled = false;
 
-            BackgroundWorker worker = new BackgroundWorker();
+            var worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
-            worker.DoWork += delegate(object sender, DoWorkEventArgs args)
+            worker.DoWork += delegate
                              {
                                  for (int k = 0; k < shadersList.Count; k++)
                                  {
                                      for (int j = 0; j < shadersList[k].Length; j++)
                                      {
-                                         object val = shadersList[k].GetValue(j, cp.UseBounds, cp.LowerBound, cp.UpperBound, cp.UseAbsolute, cp.AbsoluteValue);
+                                         object val = shadersList[k].GetValue(j, cp.UseBounds, cp.LowerBound, cp.UpperBound, cp.UseAbsolute,
+                                                                              cp.AbsoluteValue);
                                          dt.Rows[j][k] = val ?? DBNull.Value;
                                      }
                                      worker.ReportProgress((int) ((double) k/shadersList.Count*100));
@@ -546,9 +569,10 @@ namespace HexOnSteroids
                              };
 
             worker.ProgressChanged +=
-                delegate(object sender, ProgressChangedEventArgs args) { Title = string.Format("{0} - Loading Data: {1}% complete", title, args.ProgressPercentage.ToString()); };
+                delegate(object sender, ProgressChangedEventArgs args)
+                { Title = string.Format("{0} - Loading Data: {1}% complete", title, args.ProgressPercentage.ToString()); };
 
-            worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs args)
+            worker.RunWorkerCompleted += delegate
                                          {
                                              relinkDataGrid(dt);
                                              Title = oldtitle;
@@ -634,13 +658,13 @@ namespace HexOnSteroids
 
         private void mnuFileSave_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
+            var sfd = new SaveFileDialog();
             sfd.ShowDialog();
 
             if (sfd.FileName == "")
                 return;
 
-            FileMode openmode = FileMode.Open;
+            var openmode = FileMode.Open;
             if (!File.Exists(sfd.FileName))
             {
                 if (cp.RangeType == RangeType.WholeFile)
@@ -658,9 +682,9 @@ namespace HexOnSteroids
             string oldtitle = Title;
             mainGrid.IsEnabled = false;
 
-            BackgroundWorker worker = new BackgroundWorker();
+            var worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
-            worker.DoWork += delegate(object s, DoWorkEventArgs args)
+            worker.DoWork += delegate
                              {
                                  for (int k = 0; k < shadersList.Count; k++)
                                  {
@@ -668,19 +692,20 @@ namespace HexOnSteroids
                                      {
                                          object val = myCell(j, k);
                                          if (val != DBNull.Value)
-                                            shadersList[k].ChangeValue(j, val);
+                                             shadersList[k].ChangeValue(j, val);
                                      }
                                      worker.ReportProgress((int) ((double) k/shadersList.Count*100));
                                  }
                              };
 
             worker.ProgressChanged +=
-                delegate(object s, ProgressChangedEventArgs args) { Title = string.Format("{0} - Updating Data: {1}% complete", title, args.ProgressPercentage.ToString()); };
+                delegate(object s, ProgressChangedEventArgs args)
+                { Title = string.Format("{0} - Updating Data: {1}% complete", title, args.ProgressPercentage.ToString()); };
 
-            worker.RunWorkerCompleted += delegate(object o, RunWorkerCompletedEventArgs args)
+            worker.RunWorkerCompleted += delegate
                                          {
                                              using (
-                                                 EndianBinaryWriter bw =
+                                                 var bw =
                                                      new EndianBinaryWriter(
                                                          cp.Endianness == Endianness.Little
                                                              ? (EndianBitConverter) new LittleEndianBitConverter()
@@ -688,7 +713,7 @@ namespace HexOnSteroids
                                              {
                                                  for (int k = 0; k < shadersList.Count; k++)
                                                  {
-                                                     var shader = shadersList[k];
+                                                     Shader shader = shadersList[k];
                                                      bw.BaseStream.Position = shader.Start;
                                                      switch (shader.typeOfValues)
                                                      {
@@ -775,10 +800,10 @@ namespace HexOnSteroids
 
             object value = current.GetValue(row, cp.UseBounds, cp.LowerBound, cp.UpperBound, cp.UseAbsolute, cp.AbsoluteValue);
             object realvalue = current.GetValue(row);
-            txbStatus.Text = string.Format("Offset {0} (Original value: {1})", offset, value ?? string.Format("Out of Bounds ({0})", realvalue));
+            txbStatus.Text = string.Format("Offset {0} (Original value: {1})", offset,
+                                           value ?? string.Format("Out of Bounds ({0})", realvalue));
         }
 
-        
 
         private void mnuFileExit_Click(object sender, RoutedEventArgs e)
         {
@@ -787,21 +812,21 @@ namespace HexOnSteroids
 
         private void mnuFindGoTo_Click(object sender, RoutedEventArgs e)
         {
-            InputBoxWindow ibw = new InputBoxWindow("Enter the absolute offset you want to go to");
+            var ibw = new InputBoxWindow("Enter the absolute offset you want to go to");
             if (ibw.ShowDialog() == true)
             {
                 try
                 {
-                    var offset = Convert.ToInt64(input);
+                    long offset = Convert.ToInt64(input);
                     for (int i = 0; i < shadersList.Count; i++)
                     {
-                        var cur = shadersList[i];
+                        Shader cur = shadersList[i];
                         if (offset >= cur.Start && offset <= cur.End())
                         {
-                            var size = cur.GetShaderEntrySize();
-                            for (int j = 0; j<cur.Length;j++)
+                            int size = cur.GetShaderEntrySize();
+                            for (int j = 0; j < cur.Length; j++)
                             {
-                                if (offset >= cur.Start+j*size && offset <= cur.Start+(j+1)*size)
+                                if (offset >= cur.Start + j*size && offset <= cur.Start + (j + 1)*size)
                                 {
                                     dataGrid.SelectedCells.Clear();
                                     dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[j], dataGrid.Columns[i]);
@@ -813,17 +838,16 @@ namespace HexOnSteroids
                 }
                 catch (Exception)
                 {
-                    
                 }
             }
         }
 
-        private void dataGrid_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void dataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.V && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
                 string[] lines = Tools.SplitLinesToArray(Clipboard.GetText());
-                
+
                 int row = dataGrid.Items.IndexOf(dataGrid.CurrentCell.Item);
                 int col = dataGrid.CurrentCell.Column.DisplayIndex;
 
@@ -852,16 +876,15 @@ namespace HexOnSteroids
 
                 relinkDataGrid(dt);
             }
-
         }
 
         private void Window_Closing_1(object sender, CancelEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to exit?", "Hex on Steroids", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            if (MessageBox.Show("Are you sure you want to exit?", "Hex on Steroids", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                MessageBoxResult.No)
             {
                 e.Cancel = true;
             }
         }
-
     }
 }

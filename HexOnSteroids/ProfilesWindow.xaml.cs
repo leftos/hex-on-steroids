@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright Notice
+
+//    Copyright 2011-2013 Eleftherios Aslanoglou
+// 
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//        http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+
+#endregion
+
+#region Using Directives
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -7,10 +27,12 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
+#endregion
+
 namespace HexOnSteroids
 {
     /// <summary>
-    /// Interaction logic for ProfilesWindow.xaml
+    ///     Interaction logic for ProfilesWindow.xaml
     /// </summary>
     public partial class ProfilesWindow : Window
     {
@@ -85,8 +107,9 @@ namespace HexOnSteroids
             }
 
             cmbProfiles.Items.Clear();
-            Directory.GetFiles(MainWindow.ProfilesPath + "\\" + cmbCategories.SelectedItem).ToList().ForEach(
-                d => cmbProfiles.Items.Add(Path.GetFileName(d)));
+            Directory.GetFiles(MainWindow.ProfilesPath + "\\" + cmbCategories.SelectedItem)
+                     .ToList()
+                     .ForEach(d => cmbProfiles.Items.Add(Path.GetFileName(d)));
         }
 
         private void RefreshCategoriesCombo()
@@ -120,15 +143,16 @@ namespace HexOnSteroids
                 sw.WriteLine("AutoDetectValueCount$;$" + MainWindow.cp.AutoDetectValueCount);
                 sw.WriteLine("AutoDetectValueType$;$" + MainWindow.cp.AutoDetectValueType);
                 sw.WriteLine("Endianness$;$" + MainWindow.cp.Endianness);
-                foreach (string file in MainWindow.cp.Files)
+                foreach (var file in MainWindow.cp.Files)
                     sw.WriteLine("File$;$" + file);
-                foreach (CustomDataRange cdr in MainWindow.cp.Ranges)
+                foreach (var cdr in MainWindow.cp.Ranges)
                     sw.WriteLine("Range$;$" + cdr.Start + "$;$" + cdr.End + "$;$" + cdr.Type + "$;$" + cdr.Name);
                 switch (MainWindow.cp.AutoDetectValueType)
                 {
                     case TypeOfValues.Double:
                     case TypeOfValues.Float:
-                        sw.WriteLine("UseBounds$;${0}$;${1:R}$;${2:R}", MainWindow.cp.UseBounds.ToString(), MainWindow.cp.LowerBound, MainWindow.cp.UpperBound);
+                        sw.WriteLine("UseBounds$;${0}$;${1:R}$;${2:R}", MainWindow.cp.UseBounds.ToString(), MainWindow.cp.LowerBound,
+                                     MainWindow.cp.UpperBound);
                         sw.WriteLine("UseAbsolute$;${0}$;${1:R}", MainWindow.cp.UseAbsolute.ToString(), MainWindow.cp.AbsoluteValue);
                         break;
                     case TypeOfValues.Byte:
@@ -138,7 +162,8 @@ namespace HexOnSteroids
                     case TypeOfValues.UInt16:
                     case TypeOfValues.UInt32:
                     case TypeOfValues.UInt64:
-                        sw.WriteLine("UseBounds$;${0}$;${1}$;${2}", MainWindow.cp.UseBounds.ToString(), MainWindow.cp.LowerBound, MainWindow.cp.UpperBound);
+                        sw.WriteLine("UseBounds$;${0}$;${1}$;${2}", MainWindow.cp.UseBounds.ToString(), MainWindow.cp.LowerBound,
+                                     MainWindow.cp.UpperBound);
                         sw.WriteLine("UseAbsolute$;${0}$;${1}", MainWindow.cp.UseAbsolute.ToString(), MainWindow.cp.AbsoluteValue);
                         break;
                     default:

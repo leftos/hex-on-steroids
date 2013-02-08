@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationIcon>NBA 2K12.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "Readme.txt" "$(SolutionDir)\Readme.txt"</PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="LeftosCommonLibrary">
       <HintPath>.\LeftosCommonLibrary.dll</HintPath>

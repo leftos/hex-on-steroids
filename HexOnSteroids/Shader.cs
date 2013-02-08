@@ -1,5 +1,27 @@
-﻿using System;
+﻿#region Copyright Notice
+
+//    Copyright 2011-2013 Eleftherios Aslanoglou
+// 
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//        http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+
+#endregion
+
+#region Using Directives
+
+using System;
 using System.Collections.Generic;
+
+#endregion
 
 namespace HexOnSteroids
 {
@@ -201,7 +223,8 @@ namespace HexOnSteroids
             }
         }
 
-        public object GetValue(int index, bool useBounds = false, object lowerBound = null, object upperBound = null, bool useAbsolute = false, object absoluteValue = null)
+        public object GetValue(int index, bool useBounds = false, object lowerBound = null, object upperBound = null,
+                               bool useAbsolute = false, object absoluteValue = null)
         {
             if (useBounds)
             {
@@ -215,7 +238,8 @@ namespace HexOnSteroids
                 if (absoluteValue == null)
                 {
                     {
-                        throw new Exception("Shader.GetValue was called with useAbsolute set to true, but the lower bound for the absolute value was null.");
+                        throw new Exception(
+                            "Shader.GetValue was called with useAbsolute set to true, but the lower bound for the absolute value was null.");
                     }
                 }
             }
@@ -223,7 +247,7 @@ namespace HexOnSteroids
             switch (typeOfValues)
             {
                 case TypeOfValues.Double:
-                    var valD = valuesD[index];
+                    double valD = valuesD[index];
 
                     if (useBounds && !((valD >= Convert.ToDouble(lowerBound)) && (valD <= Convert.ToDouble(upperBound))))
                         valid = false;
@@ -235,7 +259,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.Float:
-                    var valF = valuesF[index];
+                    float valF = valuesF[index];
 
                     if (useBounds && !((valF >= Convert.ToSingle(lowerBound)) && (valF <= Convert.ToSingle(upperBound))))
                         valid = false;
@@ -247,7 +271,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.Byte:
-                    var valB = valuesB[index];
+                    byte valB = valuesB[index];
 
                     if (useBounds && !((valB >= Convert.ToByte(lowerBound)) && (valB <= Convert.ToByte(upperBound))))
                         valid = false;
@@ -259,7 +283,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.Int16:
-                    var valI16 = valuesI16[index];
+                    short valI16 = valuesI16[index];
 
                     if (useBounds && !((valI16 >= Convert.ToInt16(lowerBound)) && (valI16 <= Convert.ToInt16(upperBound))))
                         valid = false;
@@ -271,7 +295,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.Int32:
-                    var valI32 = valuesI32[index];
+                    int valI32 = valuesI32[index];
 
                     if (useBounds && !((valI32 >= Convert.ToInt32(lowerBound)) && (valI32 <= Convert.ToInt32(upperBound))))
                         valid = false;
@@ -283,7 +307,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.Int64:
-                    var valI64 = valuesI64[index];
+                    long valI64 = valuesI64[index];
 
                     if (useBounds && !((valI64 >= Convert.ToInt64(lowerBound)) && (valI64 <= Convert.ToInt64(upperBound))))
                         valid = false;
@@ -295,7 +319,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.UInt16:
-                    var valUI16 = valuesI16[index];
+                    short valUI16 = valuesI16[index];
 
                     if (useBounds && !((valUI16 >= Convert.ToUInt16(lowerBound)) && (valUI16 <= Convert.ToUInt16(upperBound))))
                         valid = false;
@@ -307,7 +331,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.UInt32:
-                    var valUI32 = valuesUI32[index];
+                    uint valUI32 = valuesUI32[index];
 
                     if (useBounds && !((valUI32 >= Convert.ToUInt32(lowerBound)) && (valUI32 <= Convert.ToUInt32(upperBound))))
                         valid = false;
@@ -319,7 +343,7 @@ namespace HexOnSteroids
 
                     break;
                 case TypeOfValues.UInt64:
-                    var valUI64 = valuesUI64[index];
+                    ulong valUI64 = valuesUI64[index];
 
                     if (useBounds && !((valUI64 >= Convert.ToUInt64(lowerBound)) && (valUI64 <= Convert.ToUInt64(upperBound))))
                         valid = false;
