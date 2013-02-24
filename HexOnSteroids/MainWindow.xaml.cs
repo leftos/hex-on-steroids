@@ -155,10 +155,10 @@ namespace HexOnSteroids
             var memory = new MemoryStream(file);
             var br =
                 new EndianBinaryReader(
-                    (cp.Endianness == Endianness.Little ? (EndianBitConverter) new LittleEndianBitConverter() : new BigEndianBitConverter()),
+                    (cp.EndiannessType == Endianness.Little ? (EndianBitConverter) new LittleEndianBitConverter() : new BigEndianBitConverter()),
                     memory);
 
-            if (cp.RangeType == RangeType.AutoDetectShaders || cp.RangeType == RangeType.WholeFile)
+            if (cp.TypeOfRange == RangeType.AutoDetectShaders || cp.TypeOfRange == RangeType.WholeFile)
             {
                 if (cp.IgnoreCRC)
                 {
@@ -166,7 +166,7 @@ namespace HexOnSteroids
                 }
             }
 
-            switch (cp.RangeType)
+            switch (cp.TypeOfRange)
             {
                 case RangeType.AutoDetectShaders:
                 case RangeType.AutoDetectCustomHeader:
@@ -178,11 +178,11 @@ namespace HexOnSteroids
 
                     worker.DoWork += delegate
                                      {
-                                         int length = cp.RangeType == RangeType.AutoDetectShaders ? 15 : cp.AutoDetectCustomHeader.Length/2;
+                                         int length = cp.TypeOfRange == RangeType.AutoDetectShaders ? 15 : cp.AutoDetectCustomHeader.Length/2;
                                          while (br.BaseStream.Length - br.BaseStream.Position >= length)
                                          {
                                              byte b = 0;
-                                             if (cp.RangeType == RangeType.AutoDetectShaders)
+                                             if (cp.TypeOfRange == RangeType.AutoDetectShaders)
                                              {
                                                  while (b != 83 && br.BaseStream.Position < br.BaseStream.Length)
                                                      b = br.ReadByte();
@@ -198,17 +198,17 @@ namespace HexOnSteroids
                                              {
                                                  //Console.WriteLine("Reading {0} bytes from {1}", length, br.BaseStream.Position);
                                                  byte[] bufArray = br.ReadBytes(length);
-                                                 if ((cp.RangeType == RangeType.AutoDetectShaders &&
+                                                 if ((cp.TypeOfRange == RangeType.AutoDetectShaders &&
                                                       Tools.ByteArrayToHexString(bufArray) == "53686164657220436F6D70696C6572") ||
-                                                     (cp.RangeType == RangeType.AutoDetectCustomHeader &&
+                                                     (cp.TypeOfRange == RangeType.AutoDetectCustomHeader &&
                                                       Tools.ByteArrayToHexString(bufArray) == cp.AutoDetectCustomHeader))
                                                      // "Shader Compiler"
                                                  {
-                                                     if (cp.RangeType == RangeType.AutoDetectShaders)
+                                                     if (cp.TypeOfRange == RangeType.AutoDetectShaders)
                                                          br.BaseStream.Position += 19;
                                                      if (br.BaseStream.Position%2 == 1)
                                                          br.BaseStream.Position++;
-                                                     s = new Shader(cp.AutoDetectValueType, cp.Endianness,
+                                                     s = new Shader(cp.AutoDetectValueType, cp.EndiannessType,
                                                                     string.Format("S{0} @ {1}", i++, br.BaseStream.Position));
                                                      s.Start = br.BaseStream.Position;
                                                      int j = 0;
@@ -327,7 +327,7 @@ namespace HexOnSteroids
 
                     #region Whole File
 
-                    s = new Shader(cp.AutoDetectValueType, cp.Endianness, "@" + br.BaseStream.Position);
+                    s = new Shader(cp.AutoDetectValueType, cp.EndiannessType, "@" + br.BaseStream.Position);
                     s.Start = br.BaseStream.Position;
                     switch (cp.AutoDetectValueType)
                     {
@@ -410,7 +410,7 @@ namespace HexOnSteroids
 
                     foreach (var cdr in cp.Ranges)
                     {
-                        s = new Shader(cdr.Type, cp.Endianness, cdr.Name);
+                        s = new Shader(cdr.Type, cp.EndiannessType, cdr.Name);
                         br.BaseStream.Position = cdr.Start;
                         s.Start = cdr.Start;
                         switch (cdr.Type)
@@ -612,7 +612,7 @@ namespace HexOnSteroids
             if (s.Length == cp.AutoDetectValueCount)
             {
                 shadersList.Add(s);
-                s = new Shader(cp.AutoDetectValueType, cp.Endianness, "@" + br.BaseStream.Position.ToString());
+                s = new Shader(cp.AutoDetectValueType, cp.EndiannessType, "@" + br.BaseStream.Position.ToString());
                 s.Start = br.BaseStream.Position;
             }
             return s;
@@ -635,10 +635,10 @@ namespace HexOnSteroids
             pw.ShowDialog();
 
             RefreshProfilesMenu();
-            ProfilesWindow.LoadProfile(profileToLoad, true);
 
             if (profileToLoad != "")
             {
+                ProfilesWindow.LoadProfile(profileToLoad, true);
                 string category = Helper.GetFolderName(Path.GetDirectoryName(profileToLoad));
                 string profile = Path.GetFileName(profileToLoad);
                 Title = string.Format("{0} - {1} ({2})", title, profile, category);
@@ -667,7 +667,7 @@ namespace HexOnSteroids
             var openmode = FileMode.Open;
             if (!File.Exists(sfd.FileName))
             {
-                if (cp.RangeType == RangeType.WholeFile)
+                if (cp.TypeOfRange == RangeType.WholeFile)
                 {
                     openmode = FileMode.Create;
                 }
@@ -707,7 +707,7 @@ namespace HexOnSteroids
                                              using (
                                                  var bw =
                                                      new EndianBinaryWriter(
-                                                         cp.Endianness == Endianness.Little
+                                                         cp.EndiannessType == Endianness.Little
                                                              ? (EndianBitConverter) new LittleEndianBitConverter()
                                                              : new BigEndianBitConverter(), new FileStream(sfd.FileName, openmode)))
                                              {
@@ -846,6 +846,7 @@ namespace HexOnSteroids
         {
             if (e.Key == Key.V && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
+                /*
                 string[] lines = Tools.SplitLinesToArray(Clipboard.GetText());
 
                 int row = dataGrid.Items.IndexOf(dataGrid.CurrentCell.Item);
@@ -873,8 +874,9 @@ namespace HexOnSteroids
                         }
                     }
                 }
-
                 relinkDataGrid(dt);
+                */
+                GenericEventHandlers.OnExecutedPaste(sender, null);
             }
         }
 

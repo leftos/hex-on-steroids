@@ -81,6 +81,7 @@
     <Compile Include="ProfilesWindow.xaml.cs">
       <DependentUpon>ProfilesWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Shader.cs" />
     <Page Include="CategoriesWindow.xaml">
       <SubType>Designer</SubType>

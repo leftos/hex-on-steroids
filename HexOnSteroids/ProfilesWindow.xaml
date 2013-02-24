@@ -1,5 +1,7 @@
 ﻿<Window x:Class="HexOnSteroids.ProfilesWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:HexOnSteroids="clr-namespace:HexOnSteroids"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         Title="Hex on Steroids - Edit Profile" Height="598" Width="521" Closing="Window_Closing_1"
         Icon="pack://siteoforigin:,,,/NBA 2K12.ico">
     <Window.Resources>
@@ -30,7 +32,7 @@
         <Button x:Name="btnFilesRemove" Content="Remove" Margin="0,105,10,0" VerticalAlignment="Top"
                 HorizontalAlignment="Right" Width="75" Click="btnFilesRemove_Click" />
         <GroupBox Header="Options" Margin="10,166,10,45">
-            <Grid Name="grdOptions">
+            <Grid Name="grdOptions" d:DataContext="{d:DesignInstance HexOnSteroids:CustomProfile}">
                 <RadioButton x:Name="rbAutoDetect" Content="Auto-detect shaders" HorizontalAlignment="Left"
                              VerticalAlignment="Top" Margin="10,42,0,0" IsChecked="True" Checked="rbAutoDetect_Checked" />
                 <TextBox x:Name="txtAutoDetectValueCount" HorizontalAlignment="Left" Height="23" Margin="160,39,0,0"
@@ -44,19 +46,22 @@
                 <RadioButton x:Name="rbCustom" Content="Custom" HorizontalAlignment="Left" Margin="10,92,0,0"
                              VerticalAlignment="Top" Checked="rbCustom_Checked" />
                 <ComboBox x:Name="cmbEndianness" Margin="0,69,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                          Width="120" SelectedItem="{Binding Endianness}" ItemsSource="{Binding Source={StaticResource EndianList}}" />
+                          Width="120" SelectedItem="{Binding EndiannessType}" ItemsSource="{Binding Source={StaticResource EndianList}}" />
                 <Label Content="Data Type" Margin="0,39,135,0" VerticalAlignment="Top" HorizontalAlignment="Right"
                        Width="63" />
                 <Label Content="Endianness" Margin="0,65,135,0" VerticalAlignment="Top" HorizontalAlignment="Right"
                        Width="73" />
-                <DataGrid Name="dgRanges" Margin="10,173,10,10" AutoGenerateColumns="False" SelectionUnit="Cell">
+                <DataGrid Name="dgRanges" Margin="10,173,10,10" AutoGenerateColumns="False" SelectionUnit="Cell" PreviewKeyDown="dgRanges_PreviewKeyDown"
+                          d:DataContext="{d:DesignInstance HexOnSteroids:CustomDataRange}" CanUserDeleteRows="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" ClipboardContentBinding="{x:Null}" />
-                        <DataGridTextColumn Header="Start" Binding="{Binding Start}" ClipboardContentBinding="{x:Null}" />
-                        <DataGridTextColumn Header="End" Binding="{Binding End}" ClipboardContentBinding="{x:Null}" />
-                        <DataGridComboBoxColumn Header="Type" ClipboardContentBinding="{x:Null}"
-                                                SelectedValueBinding="{Binding Type}" ItemsSource="{Binding Source={StaticResource TypeList}}"
-                                                SelectedItemBinding="{x:Null}" TextBinding="{x:Null}" />
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=TwoWay}" />
+                        <DataGridTextColumn Header="Start" Binding="{Binding Start, Mode=TwoWay}" />
+                        <DataGridTextColumn Header="Count" Binding="{Binding Count, Mode=TwoWay}" />
+                        <DataGridCheckBoxColumn Header="Auto End" Binding="{Binding AutoEnd, Mode=TwoWay}"/>
+                        <DataGridTextColumn Header="End" Binding="{Binding End, Mode=TwoWay}" />
+                        <DataGridComboBoxColumn Header="Type" 
+                                                SelectedValueBinding="{Binding Type, Mode=TwoWay}" ItemsSource="{Binding Source={StaticResource TypeList}}"
+                                                />
                     </DataGrid.Columns>
                 </DataGrid>
                 <CheckBox Name="chkBounds" Content="Only values between" HorizontalAlignment="Right" Margin="0,99,191,0" VerticalAlignment="Top" IsChecked="{Binding UseBounds}"/>
@@ -72,8 +77,10 @@
 
             </Grid>
         </GroupBox>
-        <Button x:Name="btnOK" Content="OK" Margin="0,0,10,10" Height="22" VerticalAlignment="Bottom"
-                HorizontalAlignment="Right" Width="75" Click="btnOK_Click" />
+        <Button x:Name="btnCancel" Content="Cancel" Margin="0,0,10,10" Height="22" VerticalAlignment="Bottom"
+                HorizontalAlignment="Right" Width="75" Click="btnCancel_Click" />
+        <Button x:Name="btnOK" Content="OK" Margin="0,0,90,10" Height="22" VerticalAlignment="Bottom"
+        	HorizontalAlignment="Right" Width="75" Click="btnOK_Click" />
 
     </Grid>
 </Window>

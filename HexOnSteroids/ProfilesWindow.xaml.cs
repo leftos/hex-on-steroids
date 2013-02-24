@@ -20,11 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using LeftosCommonLibrary;
 using Microsoft.Win32;
 
 #endregion
@@ -37,6 +40,7 @@ namespace HexOnSteroids
     public partial class ProfilesWindow : Window
     {
         private static ProfilesWindow pw;
+        private bool _userCancel = true;
 
         public ProfilesWindow()
         {
@@ -52,6 +56,19 @@ namespace HexOnSteroids
                 cmbCategories.SelectedIndex = 0;
             if (cmbProfiles.Items.Count > 0)
                 cmbProfiles.SelectedIndex = 0;
+
+            MainWindow.cp.Ranges.ListChanged += ranges_OnCollectionChanged;
+        }
+
+        private void ranges_OnCollectionChanged(object sender, ListChangedEventArgs args)
+        {
+            if (args.ListChangedType == ListChangedType.ItemAdded)
+            {
+                var item = MainWindow.cp.Ranges[args.NewIndex];
+                item.Type = (TypeOfValues)Enum.Parse(typeof(TypeOfValues), cmbDatatype.SelectedItem.ToString());
+                item.AutoEnd = true;
+                item.Count = 1;
+            }
         }
 
         private void cmbDatatype_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -63,7 +80,7 @@ namespace HexOnSteroids
         {
             try
             {
-                MainWindow.cp.RangeType = RangeType.AutoDetectShaders;
+                MainWindow.cp.TypeOfRange = RangeType.AutoDetectShaders;
                 dgRanges.IsEnabled = false;
                 txtAutoDetectValueCount.IsEnabled = true;
                 //cmbDatatype.IsEnabled = true;
@@ -75,7 +92,7 @@ namespace HexOnSteroids
 
         private void rbWholeFile_Checked(object sender, RoutedEventArgs e)
         {
-            MainWindow.cp.RangeType = RangeType.WholeFile;
+            MainWindow.cp.TypeOfRange = RangeType.WholeFile;
             dgRanges.IsEnabled = false;
             txtAutoDetectValueCount.IsEnabled = true;
             //cmbDatatype.IsEnabled = true;
@@ -83,7 +100,7 @@ namespace HexOnSteroids
 
         private void rbCustom_Checked(object sender, RoutedEventArgs e)
         {
-            MainWindow.cp.RangeType = RangeType.Custom;
+            MainWindow.cp.TypeOfRange = RangeType.Custom;
             dgRanges.IsEnabled = true;
             txtAutoDetectValueCount.IsEnabled = false;
             //cmbDatatype.IsEnabled = false;
@@ -138,15 +155,16 @@ namespace HexOnSteroids
             using (var sw = new StreamWriter(p, false))
             {
                 sw.WriteLine("Name$;$" + MainWindow.cp.Name);
-                sw.WriteLine("RangeType$;$" + MainWindow.cp.RangeType);
+                sw.WriteLine("RangeType$;$" + MainWindow.cp.TypeOfRange);
                 sw.WriteLine("AutoDetectCustomHeader$;$" + MainWindow.cp.AutoDetectCustomHeader);
                 sw.WriteLine("AutoDetectValueCount$;$" + MainWindow.cp.AutoDetectValueCount);
                 sw.WriteLine("AutoDetectValueType$;$" + MainWindow.cp.AutoDetectValueType);
-                sw.WriteLine("Endianness$;$" + MainWindow.cp.Endianness);
+                sw.WriteLine("Endianness$;$" + MainWindow.cp.EndiannessType);
                 foreach (var file in MainWindow.cp.Files)
                     sw.WriteLine("File$;$" + file);
                 foreach (var cdr in MainWindow.cp.Ranges)
-                    sw.WriteLine("Range$;$" + cdr.Start + "$;$" + cdr.End + "$;$" + cdr.Type + "$;$" + cdr.Name);
+                    sw.WriteLine("Range$;$" + cdr.Start + "$;$" + cdr.End + "$;$" + cdr.Type + "$;$" + cdr.Name + "$;$" + cdr.Count + "$;$" +
+                                 cdr.AutoEnd);
                 switch (MainWindow.cp.AutoDetectValueType)
                 {
                     case TypeOfValues.Double:
@@ -190,10 +208,10 @@ namespace HexOnSteroids
                             cp.Name = parts[1];
                             break;
                         case "RangeType":
-                            cp.RangeType = (RangeType) Enum.Parse(typeof (RangeType), parts[1]);
+                            cp.TypeOfRange = (RangeType) Enum.Parse(typeof (RangeType), parts[1]);
                             if (!fromMain)
                             {
-                                switch (cp.RangeType)
+                                switch (cp.TypeOfRange)
                                 {
                                     case RangeType.AutoDetectCustomHeader:
                                         pw.rbAutoDetectCustom.IsChecked = true;
@@ -222,14 +240,28 @@ namespace HexOnSteroids
                             cp.AutoDetectValueType = (TypeOfValues) Enum.Parse(typeof (TypeOfValues), parts[1]);
                             break;
                         case "Endianness":
-                            cp.Endianness = (Endianness) Enum.Parse(typeof (Endianness), parts[1]);
+                            cp.EndiannessType = (Endianness) Enum.Parse(typeof (Endianness), parts[1]);
                             break;
                         case "File":
                             cp.Files.Add(parts[1]);
                             break;
                         case "Range":
-                            cp.Ranges.Add(new CustomDataRange(Convert.ToInt64(parts[1]), Convert.ToInt64(parts[2]),
-                                                              (TypeOfValues) Enum.Parse(typeof (TypeOfValues), parts[3]), parts[4]));
+                            var cdr = new CustomDataRange();
+                            cdr.Start = Convert.ToInt64(parts[1]);
+                            cdr.End = Convert.ToInt64(parts[2]);
+                            cdr.Type = (TypeOfValues) Enum.Parse(typeof (TypeOfValues), parts[3]);
+                            cdr.Name = parts[4];
+                            try
+                            {
+                                cdr.Count = Convert.ToInt64(parts[5]);
+                                cdr.AutoEnd = Convert.ToBoolean(parts[6]);
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                                cdr.Count = 0;
+                                cdr.AutoEnd = false;
+                            }
+                            cp.Ranges.Add(cdr);
                             break;
                         case "UseBounds":
                             cp.UseBounds = Convert.ToBoolean(parts[1]);
@@ -336,6 +368,7 @@ namespace HexOnSteroids
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
+            _userCancel = false;
             Close();
         }
 
@@ -352,11 +385,17 @@ namespace HexOnSteroids
 
         private void Window_Closing_1(object sender, CancelEventArgs e)
         {
-            e.Cancel = !(CheckIfRangesAreValid());
-            if (!e.Cancel && cmbCategories.SelectedIndex != -1 && cmbProfiles.SelectedIndex != -1)
+            if (!_userCancel && cmbCategories.SelectedIndex != -1 && cmbProfiles.SelectedIndex != -1)
             {
-                SaveProfile(MainWindow.ProfilesPath + "\\" + cmbCategories.SelectedItem + "\\" + cmbProfiles.SelectedItem);
-                MainWindow.profileToLoad = MainWindow.ProfilesPath + "\\" + cmbCategories.SelectedItem + "\\" + cmbProfiles.SelectedItem;
+                if (CheckIfRangesAreValid())
+                {
+                    SaveProfile(MainWindow.ProfilesPath + "\\" + cmbCategories.SelectedItem + "\\" + cmbProfiles.SelectedItem);
+                    MainWindow.profileToLoad = MainWindow.ProfilesPath + "\\" + cmbCategories.SelectedItem + "\\" + cmbProfiles.SelectedItem;
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
             }
             else
             {
@@ -473,7 +512,7 @@ namespace HexOnSteroids
         {
             try
             {
-                MainWindow.cp.RangeType = RangeType.AutoDetectCustomHeader;
+                MainWindow.cp.TypeOfRange = RangeType.AutoDetectCustomHeader;
                 dgRanges.IsEnabled = false;
                 txtAutoDetectValueCount.IsEnabled = true;
                 //cmbDatatype.IsEnabled = true;
@@ -481,6 +520,20 @@ namespace HexOnSteroids
             catch
             {
             }
+        }
+
+        private void dgRanges_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.V && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                GenericEventHandlers.OnExecutedPaste(sender, null);
+            }
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            _userCancel = true;
+            Close();
         }
     }
 }

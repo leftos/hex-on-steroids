@@ -391,6 +391,28 @@ namespace HexOnSteroids
             int size = GetShaderEntrySize();
             return Start + Length*size;
         }
+
+        public static int SizeOf(TypeOfValues type)
+        {
+            switch (type)
+            {
+                case TypeOfValues.Double:
+                case TypeOfValues.Int64:
+                case TypeOfValues.UInt64:
+                    return 8;
+                case TypeOfValues.Float:
+                case TypeOfValues.Int32:
+                case TypeOfValues.UInt32:
+                    return 4;
+                case TypeOfValues.Int16:
+                case TypeOfValues.UInt16:
+                    return 2;
+                case TypeOfValues.Byte:
+                    return 1;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
     }
 
     public enum TypeOfValues
