@@ -189,7 +189,7 @@ namespace HexOnSteroids
                                              }
                                              else
                                              {
-                                                 while (Tools.ByteArrayToString(new[] {b}) != cp.AutoDetectCustomHeader.Substring(0, 2) &&
+                                                 while (Tools.ByteArrayToHexString(new[] {b}) != cp.AutoDetectCustomHeader.Substring(0, 2) &&
                                                         br.BaseStream.Position < br.BaseStream.Length)
                                                      b = br.ReadByte();
                                              }
@@ -199,9 +199,9 @@ namespace HexOnSteroids
                                                  //Console.WriteLine("Reading {0} bytes from {1}", length, br.BaseStream.Position);
                                                  byte[] bufArray = br.ReadBytes(length);
                                                  if ((cp.RangeType == RangeType.AutoDetectShaders &&
-                                                      Tools.ByteArrayToString(bufArray) == "53686164657220436F6D70696C6572") ||
+                                                      Tools.ByteArrayToHexString(bufArray) == "53686164657220436F6D70696C6572") ||
                                                      (cp.RangeType == RangeType.AutoDetectCustomHeader &&
-                                                      Tools.ByteArrayToString(bufArray) == cp.AutoDetectCustomHeader))
+                                                      Tools.ByteArrayToHexString(bufArray) == cp.AutoDetectCustomHeader))
                                                      // "Shader Compiler"
                                                  {
                                                      if (cp.RangeType == RangeType.AutoDetectShaders)
