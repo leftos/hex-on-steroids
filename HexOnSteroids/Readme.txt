@@ -13,6 +13,9 @@
 
 
 	Version History
+		v0.4.1
+			- Can now delete a range from a profile
+
 		v0.4
 			- Added count and auto end parameters to shaders
 			- Added pasting to data ranges in Profiles window

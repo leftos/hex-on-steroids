@@ -541,6 +541,23 @@ namespace HexOnSteroids
             {
                 GenericEventHandlers.OnExecutedPaste(sender, null);
             }
+            else if (e.Key == Key.Delete)
+            {
+                var dg = (DataGrid) sender;
+
+                if (dg.SelectedCells.Count > 0)
+                {
+                    var set = new HashSet<CustomDataRange>();
+                    foreach (var cell in dg.SelectedCells)
+                    {
+                        set.Add((CustomDataRange) cell.Item);
+                    }
+                    foreach (var item in set)
+                    {
+                        MainWindow.cp.Ranges.Remove(item);
+                    }
+                }
+            }
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
