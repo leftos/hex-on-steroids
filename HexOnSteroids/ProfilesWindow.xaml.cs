@@ -58,6 +58,11 @@ namespace HexOnSteroids
                 cmbProfiles.SelectedIndex = 0;
 
             MainWindow.cp.Ranges.ListChanged += ranges_OnCollectionChanged;
+
+            Height = MainWindow.GetRegistrySetting("PWHeight", (int)Height);
+            Width = MainWindow.GetRegistrySetting("PWWidth", (int)Width);
+            Left = MainWindow.GetRegistrySetting("PWLeft", 0);
+            Top = MainWindow.GetRegistrySetting("PWTop", 0);
         }
 
         private void ranges_OnCollectionChanged(object sender, ListChangedEventArgs args)
@@ -400,6 +405,14 @@ namespace HexOnSteroids
             else
             {
                 MainWindow.profileToLoad = "";
+            }
+
+            if (!e.Cancel)
+            {
+                MainWindow.SetRegistrySetting("PWHeight", Height);
+                MainWindow.SetRegistrySetting("PWWidth", Width);
+                MainWindow.SetRegistrySetting("PWLeft", Left);
+                MainWindow.SetRegistrySetting("PWTop", Top);
             }
         }
 

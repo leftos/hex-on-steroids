@@ -64,6 +64,11 @@ namespace HexOnSteroids
 
             cp = new CustomProfile();
             profileSelected = "";
+
+            Height = GetRegistrySetting("Height", (int)Height);
+            Width = GetRegistrySetting("Width", (int)Width);
+            Left = GetRegistrySetting("Left", 0);
+            Top = GetRegistrySetting("Top", 0);
         }
 
         private List<Shader> shadersList { get; set; }
@@ -499,6 +504,18 @@ namespace HexOnSteroids
             }
         }
 
+        private void fillDataGridNew(List<Shader> shadersList)
+        {
+            long max = 0;
+            for (int i = 0; i < shadersList.Count; i++)
+            {
+                if (shadersList[i].Length > max)
+                {
+                    max = shadersList[i].Length;
+                }
+            }
+        }
+
         private void fillDataGrid(List<Shader> shadersList)
         {
             var dt = new DataTable();
@@ -846,7 +863,6 @@ namespace HexOnSteroids
         {
             if (e.Key == Key.V && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                /*
                 string[] lines = Tools.SplitLinesToArray(Clipboard.GetText());
 
                 int row = dataGrid.Items.IndexOf(dataGrid.CurrentCell.Item);
@@ -855,7 +871,9 @@ namespace HexOnSteroids
                 if (row + lines.Length > dataGrid.Items.Count + 1)
                 {
                     MessageBox.Show(
-                        "You're trying to paste more rows than currently available. Make sure you're not selecting the shader/range names when copying data.");
+                        "You're trying to paste more rows than currently available. Make sure you're not selecting the " +
+                        "shader/range names when copying data.");
+                    e.Handled = true;
                     return;
                 }
 
@@ -865,6 +883,10 @@ namespace HexOnSteroids
                 for (int i = 0; i < lines.Length; i++)
                 {
                     string line = lines[i];
+                    if (String.IsNullOrWhiteSpace(line) && i == lines.Length - 1)
+                    {
+                        continue;
+                    }
                     string[] parts = line.Split('\t');
                     if (parts.Length == length)
                     {
@@ -875,8 +897,8 @@ namespace HexOnSteroids
                     }
                 }
                 relinkDataGrid(dt);
-                */
-                GenericEventHandlers.OnExecutedPaste(sender, null);
+                e.Handled = true;
+                //GenericEventHandlers.OnExecutedPaste(sender, null);
             }
         }
 
@@ -887,6 +909,83 @@ namespace HexOnSteroids
             {
                 e.Cancel = true;
             }
+
+            SetRegistrySetting("Height", Height);
+            SetRegistrySetting("Width", Width);
+            SetRegistrySetting("Left", Left);
+            SetRegistrySetting("Top", Top);
+        }
+
+        public static void SetRegistrySetting<T>(string setting, T value)
+        {
+            RegistryKey rk = Registry.CurrentUser;
+            try
+            {
+                try
+                {
+                    rk = rk.OpenSubKey(@"SOFTWARE\Lefteris Aslanoglou\Hex On Steroids", true);
+                    if (rk == null)
+                        throw new Exception();
+                }
+                catch (Exception)
+                {
+                    rk = Registry.CurrentUser;
+                    rk.CreateSubKey(@"SOFTWARE\Lefteris Aslanoglou\Hex On Steroids");
+                    rk = rk.OpenSubKey(@"SOFTWARE\Lefteris Aslanoglou\Hex On Steroids", true);
+                    if (rk == null)
+                        throw new Exception();
+                }
+
+                rk.SetValue(setting, value);
+            }
+            catch
+            {
+                MessageBox.Show("Couldn't save changed setting.");
+            }
+        }
+
+        public static T GetRegistrySetting<T>(string setting, T defaultValue)
+        {
+            return (T) Convert.ChangeType(GetRegistrySetting(setting, defaultValue.ToString()), typeof (T));
+        }
+
+        public static string GetRegistrySetting(string setting, string defaultValue)
+        {
+            RegistryKey rk = Registry.CurrentUser;
+            string settingValue = defaultValue;
+            try
+            {
+                if (rk == null)
+                    throw new Exception();
+
+                rk = rk.OpenSubKey(@"SOFTWARE\Lefteris Aslanoglou\Hex On Steroids");
+                if (rk != null)
+                    settingValue = rk.GetValue(setting, defaultValue).ToString();
+            }
+            catch
+            {
+                settingValue = defaultValue;
+            }
+
+            return settingValue;
+        }
+        
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            mnuOptionsIncludeHeaders.IsChecked = GetRegistrySetting("IncludeHeaders", false);
+
+            dataGrid.ClipboardCopyMode = mnuOptionsIncludeHeaders.IsChecked
+                                             ? DataGridClipboardCopyMode.IncludeHeader
+                                             : DataGridClipboardCopyMode.ExcludeHeader;
+        }
+
+        private void mnuOptionsIncludeHeaders_Click(object sender, RoutedEventArgs e)
+        {
+            SetRegistrySetting("IncludeHeaders", mnuOptionsIncludeHeaders.IsChecked);
+
+            dataGrid.ClipboardCopyMode = mnuOptionsIncludeHeaders.IsChecked
+                                             ? DataGridClipboardCopyMode.IncludeHeader
+                                             : DataGridClipboardCopyMode.ExcludeHeader;
         }
     }
 }

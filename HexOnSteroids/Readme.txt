@@ -13,6 +13,12 @@
 
 
 	Version History
+		v0.4
+			- Added count and auto end parameters to shaders
+			- Added pasting to data ranges in Profiles window
+			- Added option on whether to include headers when copying
+			- Fixed various bugs
+
 		v0.3.0.3
 			- Fixed pasting to the last row
 
