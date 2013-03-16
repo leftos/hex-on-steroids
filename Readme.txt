@@ -13,6 +13,9 @@
 
 
 	Version History
+		v0.4.1.1
+			- Fixed Whole File not showing detected values for shaders with length less than the one set in the profile settings
+
 		v0.4.1
 			- Can now delete a range from a profile
 
