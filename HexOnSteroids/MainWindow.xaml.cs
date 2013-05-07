@@ -238,7 +238,7 @@ namespace HexOnSteroids
                                         {
                                             br.BaseStream.Position += 19;
                                         }
-                                        if (cp.AutoDetectJump != 0)
+                                        if (cp.AutoDetectJump == 0)
                                         {
                                             if (br.BaseStream.Position % 2 == 1)
                                             {
