@@ -51,11 +51,21 @@ namespace HexOnSteroids
             pw = this;
 
             RefreshCategoriesCombo();
-
-            if (cmbCategories.Items.Count > 0)
-                cmbCategories.SelectedIndex = 0;
-            if (cmbProfiles.Items.Count > 0)
-                cmbProfiles.SelectedIndex = 0;
+            
+            var lep = MainWindow.GetRegistrySetting("LastEditedProfile", "");
+            if (!String.IsNullOrWhiteSpace(lep) && File.Exists(lep))
+            {
+                var parts = lep.Split('\\');
+                cmbCategories.SelectedItem = parts[parts.Length - 2];
+                cmbProfiles.SelectedItem = parts[parts.Length - 1];
+            }
+            else
+            {
+                if (cmbCategories.Items.Count > 0)
+                    cmbCategories.SelectedIndex = 0;
+                if (cmbProfiles.Items.Count > 0)
+                    cmbProfiles.SelectedIndex = 0;
+            }
 
             MainWindow.cp.Ranges.ListChanged += ranges_OnCollectionChanged;
 
@@ -417,6 +427,7 @@ namespace HexOnSteroids
                 MainWindow.SetRegistrySetting("PWWidth", Width);
                 MainWindow.SetRegistrySetting("PWLeft", Left);
                 MainWindow.SetRegistrySetting("PWTop", Top);
+                MainWindow.SetRegistrySetting("LastEditedProfile", MainWindow.profileToLoad);
             }
         }
 

@@ -120,6 +120,7 @@ namespace HexOnSteroids
             string category = ((sender as MenuItem).Parent as MenuItem).Header.ToString();
             string profile = (sender as MenuItem).Header.ToString();
             cp = ProfilesWindow.LoadProfile(ProfilesPath + "\\" + category + "\\" + profile, true);
+            SetRegistrySetting("LastEditedProfile", ProfilesPath + "\\" + category + "\\" + profile);
             Title = string.Format("{0} - {1} ({2})", title, profile, category);
             profileSelected = category + "$;$" + profile;
             var dt = new DataTable();

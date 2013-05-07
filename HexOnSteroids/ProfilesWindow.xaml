@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         Title="Hex on Steroids - Edit Profile" Height="598" Width="668" Closing="Window_Closing_1"
-        Icon="pack://siteoforigin:,,,/NBA 2K12.ico">
+        Icon="pack://siteoforigin:,,,/NBA 2K12.ico" MinWidth="668">
     <Window.Resources>
         <ObjectDataProvider x:Key="TypeList" MethodName="GetValues" ObjectType="{x:Type HexOnSteroids:TypeOfValues}">
             <ObjectDataProvider.MethodParameters>
