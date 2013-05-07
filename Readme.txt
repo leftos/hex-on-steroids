@@ -13,6 +13,10 @@
 
 
 	Version History
+		v0.5
+			- Added byte jumps when auto detecting shaders or a custom header
+			- When using Profiles > Edit..., the currently selected or last edited profile will be shown
+
 		v0.4.1.1
 			- Fixed Whole File not showing detected values for shaders with length less than the one set in the profile settings
 
