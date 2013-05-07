@@ -248,6 +248,11 @@ namespace HexOnSteroids
                                         else
                                         {
                                             br.BaseStream.Position += cp.AutoDetectJump;
+                                            if (shadersList.Count > 0 && br.BaseStream.Position <= shadersList[shadersList.Count - 1].Start)
+                                            {
+                                                br.BaseStream.Position -= cp.AutoDetectJump;
+                                                continue;
+                                            }
                                         }
                                         s = new Shader(
                                             cp.AutoDetectValueType,
@@ -867,7 +872,10 @@ namespace HexOnSteroids
             int size = 1;
             size = current.GetShaderEntrySize();
 
-            long offset = current.Start + row * size;
+            var jump = (cp.TypeOfRange == RangeType.AutoDetectCustomHeader || cp.TypeOfRange == RangeType.AutoDetectShaders)
+                           ? cp.AutoDetectJump
+                           : 0;
+            long offset = current.Start + jump + row * size;
 
             try
             {
