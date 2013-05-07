@@ -20,6 +20,7 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+
 using HexOnSteroids.Annotations;
 
 #endregion
@@ -70,6 +71,18 @@ namespace HexOnSteroids
         }
 
         private int _autoDetectValueCount;
+
+        public int AutoDetectJump
+        {
+            get { return _autoDetectJump; }
+            set
+            {
+                _autoDetectJump = value;
+                OnPropertyChanged("AutoDetectJump");
+            }
+        }
+
+        private int _autoDetectJump;
 
         public TypeOfValues AutoDetectValueType
         {
@@ -210,7 +223,9 @@ namespace HexOnSteroids
         {
             var handler = PropertyChanged;
             if (handler != null)
+            {
                 handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 
@@ -229,7 +244,6 @@ namespace HexOnSteroids
             End = end;
             Type = typeOfValues;
         }
-
 
         public string Name
         {
@@ -289,7 +303,7 @@ namespace HexOnSteroids
             }
             else
             {
-                _count = (_end - _start + 1)/Shader.SizeOf(_type);
+                _count = (_end - _start + 1) / Shader.SizeOf(_type);
                 OnPropertyChanged("Count");
             }
         }
@@ -329,7 +343,9 @@ namespace HexOnSteroids
         {
             var handler = PropertyChanged;
             if (handler != null)
+            {
                 handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 

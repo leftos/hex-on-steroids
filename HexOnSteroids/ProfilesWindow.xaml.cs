@@ -164,6 +164,7 @@ namespace HexOnSteroids
                 sw.WriteLine("AutoDetectCustomHeader$;$" + MainWindow.cp.AutoDetectCustomHeader);
                 sw.WriteLine("AutoDetectValueCount$;$" + MainWindow.cp.AutoDetectValueCount);
                 sw.WriteLine("AutoDetectValueType$;$" + MainWindow.cp.AutoDetectValueType);
+                sw.WriteLine("AutoDetectJump;$" + MainWindow.cp.AutoDetectJump);
                 sw.WriteLine("Endianness$;$" + MainWindow.cp.EndiannessType);
                 foreach (var file in MainWindow.cp.Files)
                     sw.WriteLine("File$;$" + file);
@@ -243,6 +244,9 @@ namespace HexOnSteroids
                             break;
                         case "AutoDetectValueType":
                             cp.AutoDetectValueType = (TypeOfValues) Enum.Parse(typeof (TypeOfValues), parts[1]);
+                            break;
+                        case "AutoDetectJump":
+                            cp.AutoDetectJump = Convert.ToInt32(parts[1]);
                             break;
                         case "Endianness":
                             cp.EndiannessType = (Endianness) Enum.Parse(typeof (Endianness), parts[1]);

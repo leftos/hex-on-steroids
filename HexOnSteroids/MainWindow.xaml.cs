@@ -237,9 +237,16 @@ namespace HexOnSteroids
                                         {
                                             br.BaseStream.Position += 19;
                                         }
-                                        if (br.BaseStream.Position % 2 == 1)
+                                        if (cp.AutoDetectJump != 0)
                                         {
-                                            br.BaseStream.Position++;
+                                            if (br.BaseStream.Position % 2 == 1)
+                                            {
+                                                br.BaseStream.Position++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            br.BaseStream.Position += cp.AutoDetectJump;
                                         }
                                         s = new Shader(
                                             cp.AutoDetectValueType,

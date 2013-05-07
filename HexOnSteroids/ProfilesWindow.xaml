@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:HexOnSteroids="clr-namespace:HexOnSteroids"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
-        Title="Hex on Steroids - Edit Profile" Height="598" Width="521" Closing="Window_Closing_1"
+        Title="Hex on Steroids - Edit Profile" Height="598" Width="668" Closing="Window_Closing_1"
         Icon="pack://siteoforigin:,,,/NBA 2K12.ico">
     <Window.Resources>
         <ObjectDataProvider x:Key="TypeList" MethodName="GetValues" ObjectType="{x:Type HexOnSteroids:TypeOfValues}">
@@ -37,7 +37,7 @@
                              VerticalAlignment="Top" Margin="10,42,0,0" IsChecked="True" Checked="rbAutoDetect_Checked" />
                 <TextBox x:Name="txtAutoDetectValueCount" HorizontalAlignment="Left" Height="23" Margin="160,39,0,0"
                          TextWrapping="Wrap" VerticalAlignment="Top" Width="41" Text="{Binding AutoDetectValueCount}" />
-                <Label Content="values" HorizontalAlignment="Left" Margin="201,37,0,0" VerticalAlignment="Top" />
+                <Label Content="values after a" HorizontalAlignment="Left" Margin="201,37,0,0" VerticalAlignment="Top" />
                 <RadioButton x:Name="rbWholeFile" Content="Whole file" HorizontalAlignment="Left"
                              VerticalAlignment="Top" Margin="10,67,0,0" Checked="rbWholeFile_Checked" />
                 <ComboBox x:Name="cmbDatatype" Margin="0,42,10,0" VerticalAlignment="Top" HorizontalAlignment="Right"
@@ -74,6 +74,9 @@
                 <RadioButton x:Name="rbAutoDetectCustom" Content="Auto-detect with custom header" HorizontalAlignment="Left"
                 	VerticalAlignment="Top" Margin="10,14,0,0" IsChecked="True" Checked="rbAutoDetectCustom_Checked" />
                 <TextBox x:Name="txtCustomHeader" Height="23" Margin="213,10,10,0" VerticalAlignment="Top" Text="{Binding AutoDetectCustomHeader}" MaxLines="1"/>
+                <TextBox x:Name="txtAutoDetectJump" HorizontalAlignment="Left" Height="23" Margin="286,39,0,0"
+                	TextWrapping="Wrap" VerticalAlignment="Top" Width="41" Text="{Binding AutoDetectJump}" />
+                <Label Content="byte jump" HorizontalAlignment="Left" Margin="332,37,0,0" VerticalAlignment="Top" />
 
             </Grid>
         </GroupBox>
