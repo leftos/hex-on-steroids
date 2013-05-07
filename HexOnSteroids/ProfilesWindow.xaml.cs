@@ -164,7 +164,7 @@ namespace HexOnSteroids
                 sw.WriteLine("AutoDetectCustomHeader$;$" + MainWindow.cp.AutoDetectCustomHeader);
                 sw.WriteLine("AutoDetectValueCount$;$" + MainWindow.cp.AutoDetectValueCount);
                 sw.WriteLine("AutoDetectValueType$;$" + MainWindow.cp.AutoDetectValueType);
-                sw.WriteLine("AutoDetectJump;$" + MainWindow.cp.AutoDetectJump);
+                sw.WriteLine("AutoDetectJump$;$" + MainWindow.cp.AutoDetectJump);
                 sw.WriteLine("Endianness$;$" + MainWindow.cp.EndiannessType);
                 foreach (var file in MainWindow.cp.Files)
                     sw.WriteLine("File$;$" + file);
